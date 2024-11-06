@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
         page = GeneratorPage();
         break;
       case 1:
-        page = FavoritePage();
+        page = FavoritesPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -105,13 +105,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class FavoritePage extends StatelessWidget {
+class FavoritesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    var appState = context.watch<MyAppState>();
+
+    if (appState.favorites.isEmpty) {
+      return Center(
+        child: Text('No favorites yet.'),
+      );
+    }
+
+    return ListView(
       children: [
-        for (var word in context.watch<MyAppState>().favorites)
-          Text(word.asLowerCase),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have '
+              '${appState.favorites.length} favorites:'),
+        ),
+        for (var pair in appState.favorites)
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text(pair.asLowerCase),
+          ),
       ],
     );
   }
